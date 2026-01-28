@@ -1,5 +1,7 @@
 # AlertOps - Modular Alert Receiver
 
+[![Build and Push Docker Image](https://github.com/malina/alertops/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/malina/alertops/actions/workflows/docker-publish.yml)
+
 A flexible, plugin-based alert receiver for Prometheus Alertmanager with support for custom alert processing actions.
 
 ## Features
@@ -28,6 +30,28 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080
 
 ### Running with Docker
 
+#### Using pre-built image from GitHub Container Registry
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/malina/alertops:latest
+
+# Run the container
+docker run -d \
+  -p 8080:8080 \
+  -v $(pwd)/config.yaml:/app/config.yaml \
+  --name alertops \
+  ghcr.io/malina/alertops:latest
+
+# View logs
+docker logs -f alertops
+
+# Test the endpoint
+curl http://localhost:8080/health
+```
+
+#### Building locally
+
 ```bash
 # Build the image
 docker build -t alertops:latest .
@@ -38,12 +62,6 @@ docker run -d \
   -v $(pwd)/config.yaml:/app/config.yaml \
   --name alertops \
   alertops:latest
-
-# View logs
-docker logs -f alertops
-
-# Test the endpoint
-curl http://localhost:8080/health
 ```
 
 ### Docker Compose (optional)
@@ -52,7 +70,9 @@ curl http://localhost:8080/health
 version: '3.8'
 services:
   alertops:
-    build: .
+    image: ghcr.io/malina/alertops:latest
+    # Or build locally:
+    # build: .
     ports:
       - "8080:8080"
     volumes:
@@ -106,9 +126,10 @@ See `app/plugins/logger.py` for an example.
 This project uses [Google Distroless](https://github.com/GoogleContainerTools/distroless) base images for:
 
 - **Minimal attack surface**: No shell, package managers, or unnecessary binaries
-- **Small image size**: Only Python runtime and application dependencies
+- **Small image size**: Only Python runtime and application dependencies (~88 MB)
 - **Security**: Runs as non-root user by default
 - **Reproducibility**: Immutable, minimal base layer
+- **Multi-arch**: Built for linux/amd64 and linux/arm64
 
 ### Image Layers
 1. **Builder stage**: `python:3.11-slim` - Installs dependencies
@@ -119,3 +140,21 @@ This project uses [Google Distroless](https://github.com/GoogleContainerTools/di
 - No shell access
 - Minimal dependencies
 - Distroless Python 3 runtime only
+
+### Available Image Tags
+
+Images are automatically built and published to GitHub Container Registry:
+
+- `ghcr.io/malina/alertops:latest` - Latest build from main branch
+- `ghcr.io/malina/alertops:main` - Latest main branch
+- `ghcr.io/malina/alertops:v1.0.0` - Specific version tags
+- `ghcr.io/malina/alertops:main-sha-abc123` - Specific commit SHA
+
+### CI/CD Pipeline
+
+Every push to `main` triggers:
+1. Multi-stage Docker build with caching
+2. Multi-architecture builds (amd64/arm64)
+3. Automatic tagging (latest, branch, SHA)
+4. Push to GitHub Container Registry
+5. Build provenance attestation

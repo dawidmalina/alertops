@@ -129,7 +129,6 @@ This project uses [Google Distroless](https://github.com/GoogleContainerTools/di
 - **Small image size**: Only Python runtime and application dependencies (~88 MB)
 - **Security**: Runs as non-root user by default
 - **Reproducibility**: Immutable, minimal base layer
-- **Multi-arch**: Built for linux/amd64 and linux/arm64
 
 ### Image Layers
 1. **Builder stage**: `python:3.11-slim` - Installs dependencies
@@ -145,16 +144,14 @@ This project uses [Google Distroless](https://github.com/GoogleContainerTools/di
 
 Images are automatically built and published to GitHub Container Registry:
 
-- `ghcr.io/malina/alertops:latest` - Latest build from main branch
-- `ghcr.io/malina/alertops:main` - Latest main branch
-- `ghcr.io/malina/alertops:v1.0.0` - Specific version tags
-- `ghcr.io/malina/alertops:main-sha-abc123` - Specific commit SHA
+- `ghcr.io/dawidmalina/alertops:latest` - Latest build from main branch
+- `ghcr.io/dawidmalina/alertops:main` - Latest main branch
+- `ghcr.io/dawidmalina/alertops:v1.0.0` - Specific version tags
+- `ghcr.io/dawidmalina/alertops:sha-abc123` - Specific commit SHA
 
 ### CI/CD Pipeline
 
 Every push to `main` triggers:
-1. Multi-stage Docker build with caching
-2. Multi-architecture builds (amd64/arm64)
-3. Automatic tagging (latest, branch, SHA)
-4. Push to GitHub Container Registry
-5. Build provenance attestation
+1. Docker build with caching
+2. Automatic tagging (latest, branch, SHA)
+3. Push to GitHub Container Registry

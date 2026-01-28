@@ -1,6 +1,6 @@
 # AlertOps - Modular Alert Receiver
 
-[![Build and Push Docker Image](https://github.com/malina/alertops/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/malina/alertops/actions/workflows/docker-publish.yml)
+[![Build and Push Docker Image](https://github.com/dawidmalina/alertops/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/dawidmalina/alertops/actions/workflows/docker-publish.yml)
 
 A flexible, plugin-based alert receiver for Prometheus Alertmanager with support for custom alert processing actions.
 
@@ -34,14 +34,14 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/malina/alertops:latest
+docker pull ghcr.io/dawidmalina/alertops:latest
 
 # Run the container
 docker run -d \
   -p 8080:8080 \
   -v $(pwd)/config.yaml:/app/config.yaml \
   --name alertops \
-  ghcr.io/malina/alertops:latest
+  ghcr.io/dawidmalina/alertops:latest
 
 # View logs
 docker logs -f alertops
@@ -70,7 +70,7 @@ docker run -d \
 version: '3.8'
 services:
   alertops:
-    image: ghcr.io/malina/alertops:latest
+    image: ghcr.io/dawidmalina/alertops:latest
     # Or build locally:
     # build: .
     ports:

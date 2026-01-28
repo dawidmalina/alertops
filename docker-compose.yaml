@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  alertops:
+    build: .
+    image: alertops:latest
+    container_name: alertops
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount config as read-only
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8080/health\")'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

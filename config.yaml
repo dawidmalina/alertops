@@ -1,0 +1,16 @@
+# Alert Receiver Configuration
+server:
+  host: "0.0.0.0"
+  port: 8080
+  log_level: "info"
+
+# Enabled plugins
+plugins:
+  enabled:
+    - logger
+  
+  # Plugin-specific configurations
+  logger:
+    format: "json"  # Options: json, text
+    include_labels: true
+    include_annotations: true

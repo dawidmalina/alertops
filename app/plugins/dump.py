@@ -12,10 +12,13 @@ Usage:
 """
 
 import json
+import logging
 import sys
 from typing import Dict, Any
 from app.plugins.base import BasePlugin
 from app.models import WebhookPayload
+
+logger = logging.getLogger(__name__)
 
 
 class DumpPlugin(BasePlugin):
@@ -75,6 +78,9 @@ class DumpPlugin(BasePlugin):
     def validate_config(self) -> bool:
         """Validate dump plugin configuration."""
         if not isinstance(self.indent, int) or self.indent < 0:
-            print(f"Invalid indent value '{self.indent}'. Must be a non-negative integer", file=sys.stderr)
+            logger.error(f"Invalid indent value '{self.indent}'. Must be a non-negative integer")
+            return False
+        if not isinstance(self.ensure_ascii, bool):
+            logger.error(f"Invalid ensure_ascii value '{self.ensure_ascii}'. Must be a boolean")
             return False
         return True

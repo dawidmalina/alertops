@@ -8,16 +8,10 @@ server:
 plugins:
   enabled:
     - logger
-    # - dump  # Uncomment to enable payload dump for debugging/development
+    - dump
   
   # Plugin-specific configurations
   logger:
     format: "json"  # Options: json, text
     include_labels: true
     include_annotations: true
-  
-  # Dump plugin - outputs raw JSON payload to stdout
-  # Useful for debugging and capturing test data for plugin development
-  dump:
-    indent: 2  # JSON indentation for pretty printing
-    ensure_ascii: false  # Whether to escape non-ASCII characters

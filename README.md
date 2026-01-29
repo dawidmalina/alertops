@@ -84,7 +84,7 @@ services:
 
 Each plugin registers its own endpoint at `/alert/{plugin_name}`:
 
-- `/alert/logger` - Logs alerts to stdout
+- `/alert/logger` - Logs alerts to stdout in human-readable text format
 - `/alert/dump` - Outputs complete raw payload in JSON format (useful for debugging/development)
 - `/alert/jira` - Creates Jira tickets (coming soon)
 - `/alert/webhook` - Forwards to other webhooks (coming soon)
@@ -97,10 +97,26 @@ Edit `config.yaml`:
 plugins:
   enabled:
     - logger
-  
-  logger:
-    format: "json"
+    - dump
 ```
+
+### Logger Plugin
+
+The logger plugin outputs alerts in a clean, markdown-style text format similar to Grafana's Alertmanager notifications:
+
+```
+*Alert:* Test Alert Summary - `warning`
+
+*Description:* This is a test alert from Alertmanager
+
+*Details:*
+  • *alertname:* `TestAlert`
+  • *instance:* `localhost:9090`
+  • *job:* `test-job`
+  • *severity:* `warning`
+```
+
+**For JSON output, use the dump plugin** which outputs the complete raw payload.
 
 ## Alertmanager Configuration
 

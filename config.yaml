@@ -8,6 +8,7 @@ server:
 plugins:
   enabled:
     - logger
+    - dump
   
   # Plugin-specific configurations
   logger:

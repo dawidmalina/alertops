@@ -85,6 +85,7 @@ services:
 Each plugin registers its own endpoint at `/alert/{plugin_name}`:
 
 - `/alert/logger` - Logs alerts to stdout
+- `/alert/dump` - Outputs complete raw payload in JSON format (useful for debugging/development)
 - `/alert/jira` - Creates Jira tickets (coming soon)
 - `/alert/webhook` - Forwards to other webhooks (coming soon)
 
@@ -120,6 +121,32 @@ receivers:
 5. Add plugin name to `config.yaml`
 
 See `app/plugins/logger.py` for an example.
+
+## Dump Plugin - For Development & Debugging
+
+The `dump` plugin outputs the complete raw JSON payload to stdout, making it perfect for:
+
+- **Debugging**: See exactly what data Alertmanager is sending
+- **Plugin Development**: Capture real payloads to use as test data
+- **Testing**: Understand the structure of incoming webhooks
+
+### Usage
+
+The dump plugin is **enabled by default**. To use it:
+
+1. Configure Alertmanager to send alerts to the dump endpoint:
+
+```yaml
+receivers:
+  - name: 'alertops-dump'
+    webhook_configs:
+      - url: 'http://localhost:8080/alert/dump'
+        send_resolved: true
+```
+
+2. Trigger an alert and check the application logs/stdout for the JSON payload
+
+3. Copy the dumped payload for use in plugin development or testing
 
 ## Docker Image Details
 

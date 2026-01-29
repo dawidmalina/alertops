@@ -84,7 +84,7 @@ services:
 
 Each plugin registers its own endpoint at `/alert/{plugin_name}`:
 
-- `/alert/logger` - Logs alerts to stdout
+- `/alert/logger` - Logs alerts to stdout in human-readable text format
 - `/alert/dump` - Outputs complete raw payload in JSON format (useful for debugging/development)
 - `/alert/jira` - Creates Jira tickets (coming soon)
 - `/alert/webhook` - Forwards to other webhooks (coming soon)
@@ -97,46 +97,12 @@ Edit `config.yaml`:
 plugins:
   enabled:
     - logger
-  
-  logger:
-    format: "json"  # Options: "json" or "text"
-    include_labels: true
-    include_annotations: true
+    - dump
 ```
 
-### Logger Plugin Formats
+### Logger Plugin
 
-The logger plugin supports two output formats:
-
-#### JSON Format (default)
-Structured JSON output with all fields, perfect for log aggregation and parsing:
-
-```json
-{
-  "timestamp": "2026-01-29T10:37:34.371848",
-  "version": "4",
-  "groupKey": "{}:{alertname=\"TestAlert\"}",
-  "status": "firing",
-  "receiver": "webhook-test",
-  "alerts_count": 1,
-  "alerts": [
-    {
-      "status": "firing",
-      "labels": {
-        "alertname": "TestAlert",
-        "severity": "warning"
-      },
-      "annotations": {
-        "description": "This is a test alert",
-        "summary": "Test Alert Summary"
-      }
-    }
-  ]
-}
-```
-
-#### Text Format
-Clean, markdown-style output similar to Grafana's Alertmanager notifications, perfect for human readability:
+The logger plugin outputs alerts in a clean, markdown-style text format similar to Grafana's Alertmanager notifications:
 
 ```
 *Alert:* Test Alert Summary - `warning`
@@ -150,7 +116,7 @@ Clean, markdown-style output similar to Grafana's Alertmanager notifications, pe
   • *severity:* `warning`
 ```
 
-To use text format, set `format: "text"` in your logger configuration.
+**For JSON output, use the dump plugin** which outputs the complete raw payload.
 
 ## Alertmanager Configuration
 

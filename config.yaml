@@ -9,9 +9,3 @@ plugins:
   enabled:
     - logger
     - dump
-  
-  # Plugin-specific configurations
-  logger:
-    format: "json"  # Options: json, text
-    include_labels: true
-    include_annotations: true

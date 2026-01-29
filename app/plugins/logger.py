@@ -3,6 +3,10 @@ Logger plugin - logs alerts to stdout.
 
 This is a simple reference implementation that demonstrates
 how to create a plugin for the alert receiver.
+
+The text format provides a clean, markdown-style output similar to
+Grafana's Alertmanager notification format, showing alert title,
+description, and details with all labels.
 """
 
 import json
@@ -21,8 +25,13 @@ class LoggerPlugin(BasePlugin):
     
     Configuration options (from config.yaml):
         format: "json" or "text" (default: "json")
+            - json: Structured JSON output with all fields
+            - text: Clean markdown-style format showing alert title, description, 
+                    and details (labels) - similar to Grafana's format
         include_labels: bool (default: true)
+            - Includes labels in the output (text format shows them in Details section)
         include_annotations: bool (default: true)
+            - Includes annotations in the output (used in text format)
     """
     
     def __init__(self, config: Dict[str, Any] = None):
@@ -89,52 +98,38 @@ class LoggerPlugin(BasePlugin):
     
     def _log_text(self, payload: WebhookPayload):
         """Log payload in human-readable text format."""
-        separator = "=" * 80
-        logger.info(f"\n{separator}")
-        logger.info(f"🚨 ALERTMANAGER WEBHOOK - {payload.status.upper()}")
-        logger.info(f"{separator}")
-        logger.info(f"Timestamp: {datetime.utcnow().isoformat()}")
-        logger.info(f"Receiver: {payload.receiver}")
-        logger.info(f"Group Key: {payload.groupKey}")
-        logger.info(f"Alerts Count: {len(payload.alerts)}")
-        logger.info(f"External URL: {payload.externalURL}")
+        output_lines = []
         
-        if payload.commonLabels:
-            logger.info(f"\nCommon Labels:")
-            for key, value in payload.commonLabels.items():
-                logger.info(f"  {key}: {value}")
-        
-        if payload.commonAnnotations:
-            logger.info(f"\nCommon Annotations:")
-            for key, value in payload.commonAnnotations.items():
-                logger.info(f"  {key}: {value}")
-        
-        logger.info(f"\n{separator}")
-        logger.info(f"ALERTS ({len(payload.alerts)}):")
-        logger.info(f"{separator}")
-        
-        for i, alert in enumerate(payload.alerts, 1):
-            logger.info(f"\nAlert #{i}")
-            logger.info(f"  Status: {alert.status}")
-            logger.info(f"  Fingerprint: {alert.fingerprint}")
-            logger.info(f"  Starts At: {alert.startsAt.isoformat()}")
+        for alert in payload.alerts:
+            # Alert header with title and severity
+            title = alert.annotations.get("title") or alert.annotations.get("summary") or alert.labels.get("alertname", "Alert")
+            severity = alert.labels.get("severity", "")
             
-            if alert.endsAt:
-                logger.info(f"  Ends At: {alert.endsAt.isoformat()}")
+            if severity:
+                output_lines.append(f"*Alert:* {title} - `{severity}`")
+            else:
+                output_lines.append(f"*Alert:* {title}")
             
-            logger.info(f"  Generator: {alert.generatorURL}")
+            output_lines.append("")
+            
+            # Description
+            description = alert.annotations.get("description", "No description provided")
+            output_lines.append(f"*Description:* {description}")
+            output_lines.append("")
+            
+            # Details section with all labels
+            output_lines.append("*Details:*")
             
             if self.include_labels and alert.labels:
-                logger.info(f"  Labels:")
-                for key, value in alert.labels.items():
-                    logger.info(f"    {key}: {value}")
+                # Sort labels for consistent output
+                sorted_labels = sorted(alert.labels.items())
+                for key, value in sorted_labels:
+                    output_lines.append(f"  • *{key}:* `{value}`")
             
-            if self.include_annotations and alert.annotations:
-                logger.info(f"  Annotations:")
-                for key, value in alert.annotations.items():
-                    logger.info(f"    {key}: {value}")
+            output_lines.append("")
         
-        logger.info(f"{separator}\n")
+        # Log the formatted output
+        logger.info("\n" + "\n".join(output_lines))
     
     def validate_config(self) -> bool:
         """Validate logger plugin configuration."""

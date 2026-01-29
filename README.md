@@ -99,8 +99,58 @@ plugins:
     - logger
   
   logger:
-    format: "json"
+    format: "json"  # Options: "json" or "text"
+    include_labels: true
+    include_annotations: true
 ```
+
+### Logger Plugin Formats
+
+The logger plugin supports two output formats:
+
+#### JSON Format (default)
+Structured JSON output with all fields, perfect for log aggregation and parsing:
+
+```json
+{
+  "timestamp": "2026-01-29T10:37:34.371848",
+  "version": "4",
+  "groupKey": "{}:{alertname=\"TestAlert\"}",
+  "status": "firing",
+  "receiver": "webhook-test",
+  "alerts_count": 1,
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "TestAlert",
+        "severity": "warning"
+      },
+      "annotations": {
+        "description": "This is a test alert",
+        "summary": "Test Alert Summary"
+      }
+    }
+  ]
+}
+```
+
+#### Text Format
+Clean, markdown-style output similar to Grafana's Alertmanager notifications, perfect for human readability:
+
+```
+*Alert:* Test Alert Summary - `warning`
+
+*Description:* This is a test alert from Alertmanager
+
+*Details:*
+  • *alertname:* `TestAlert`
+  • *instance:* `localhost:9090`
+  • *job:* `test-job`
+  • *severity:* `warning`
+```
+
+To use text format, set `format: "text"` in your logger configuration.
 
 ## Alertmanager Configuration
 

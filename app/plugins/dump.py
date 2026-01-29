@@ -44,4 +44,8 @@ class DumpPlugin(BasePlugin):
             "message": "Payload dumped to stdout",
             "alerts_processed": len(payload.alerts)
         }
+    
+    def validate_config(self) -> bool:
+        """Validate plugin configuration (no validation needed for dump plugin)."""
+        return True
 

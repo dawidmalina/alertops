@@ -55,6 +55,11 @@ class LoggerPlugin(BasePlugin):
     
     def _log_text(self, payload: WebhookPayload):
         """Log payload in human-readable text format."""
+        # Handle empty alerts case
+        if not payload.alerts:
+            logger.info("No alerts to log")
+            return
+        
         output_lines = []
         
         for i, alert in enumerate(payload.alerts):
@@ -88,8 +93,9 @@ class LoggerPlugin(BasePlugin):
                     output_lines.append(f"  • *{key}:* `{value}`")
                 output_lines.append("")
         
-        # Log the formatted output
-        logger.info("\n" + "\n".join(output_lines))
+        # Log the formatted output (remove trailing blank line if present)
+        output_text = "\n".join(output_lines).rstrip()
+        logger.info("\n" + output_text)
     
     def validate_config(self) -> bool:
         """Validate logger plugin configuration."""

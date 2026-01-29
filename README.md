@@ -132,15 +132,9 @@ The `dump` plugin outputs the complete raw JSON payload to stdout, making it per
 
 ### Usage
 
-1. Add `dump` to your enabled plugins in `config.yaml`:
+The dump plugin is **enabled by default**. To use it:
 
-```yaml
-plugins:
-  enabled:
-    - dump
-```
-
-2. Configure Alertmanager to send alerts to the dump endpoint:
+1. Configure Alertmanager to send alerts to the dump endpoint:
 
 ```yaml
 receivers:
@@ -150,18 +144,9 @@ receivers:
         send_resolved: true
 ```
 
-3. Trigger an alert and check the application logs/stdout for the JSON payload
+2. Trigger an alert and check the application logs/stdout for the JSON payload
 
-4. Copy the dumped payload for use in plugin development or testing
-
-### Configuration Options
-
-```yaml
-plugins:
-  dump:
-    indent: 2              # JSON indentation (default: 2)
-    ensure_ascii: false    # Escape non-ASCII chars (default: false)
-```
+3. Copy the dumped payload for use in plugin development or testing
 
 ## Docker Image Details
 

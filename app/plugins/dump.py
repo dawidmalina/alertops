@@ -30,9 +30,9 @@ class DumpPlugin(BasePlugin):
         Returns:
             Processing result
         """
-        # Convert the Pydantic model to dict and output as JSON
+        # Convert the Pydantic model to dict and output as JSON in one line
         payload_dict = payload.model_dump(mode='json')
-        json_output = json.dumps(payload_dict, indent=2, ensure_ascii=False)
+        json_output = json.dumps(payload_dict, ensure_ascii=False)
         
         # Print to stdout
         print(json_output, file=sys.stdout)

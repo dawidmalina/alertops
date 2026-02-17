@@ -3,3 +3,7 @@ uvicorn[standard]==0.27.0
 pydantic==2.5.3
 pyyaml==6.0.1
 python-dotenv==1.0.0
+
+# AI and MCP support
+httpx>=0.26.0  # Async HTTP client for GitHub Models API and MCP SSE
+mcp>=1.0.0  # Model Context Protocol client library

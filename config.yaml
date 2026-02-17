@@ -4,8 +4,56 @@ server:
   port: 8080
   log_level: "info"
 
+# AI Configuration (Global defaults)
+ai:
+  provider: "github_models"  # Options: github_models, mcp
+  github_pat: "${GITHUB_PAT}"  # GitHub Personal Access Token from environment
+  model: "gpt-4o-mini"  # Options: gpt-4o-mini, gpt-4o, claude-3-5-sonnet
+  temperature: 0.3  # 0.0 = deterministic, 1.0 = creative
+  max_tokens: 300  # Maximum tokens in response
+
+# MCP Server Connections
+mcp_servers:
+  # Jira MCP Server (remote)
+  jira:
+    url: "https://mcp-jira.example.com"  # Replace with your Jira MCP server URL
+    auth_token: "${MCP_JIRA_TOKEN}"  # Bearer token from environment
+    timeout: 30
+    enabled: false  # Set to true when server is available
+  
+  # Kubernetes MCP Server (remote)
+  kubernetes:
+    url: "https://mcp-k8s.example.com"  # Replace with your K8s MCP server URL
+    auth_token: "${MCP_K8S_TOKEN}"  # Bearer token from environment
+    timeout: 60
+    enabled: false  # Set to true when server is available
+
 # Enabled plugins
 plugins:
   enabled:
     - logger
+    # - jira  # Uncomment to enable Jira plugin
     - dump
+  
+  # Jira Plugin Configuration
+  jira:
+    project_key: "OPS"  # Jira project key
+    issue_type: "Incident"  # Issue type to create
+    
+    # Deduplication settings
+    deduplicate: true  # Check for existing issues
+    deduplicate_window_hours: 24  # Look back window
+    
+    # Severity to priority mapping
+    severity_priority_map:
+      critical: "Highest"
+      high: "High"
+      warning: "High"
+      info: "Medium"
+      low: "Low"
+    
+    # AI configuration overrides (optional)
+    ai:
+      system_prompt: "You are an expert SRE assistant creating concise Jira tickets from Prometheus alerts. Focus on severity, impact, and actionable recommendations."
+      temperature: 0.2  # Lower for more consistent summaries
+      max_tokens: 200
